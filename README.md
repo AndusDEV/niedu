@@ -1,5 +1,5 @@
 # niedu
-## Czym jest niedu
+## Czym jest niedu?
 Aplikacja **niedu** powstała jako odpowiedź na wprowadzenie płatnych funkcji w popularnym e-dzienniku. 
 Celem jej stworzenia jest umożliwienie użytkownikom dostępu do ważnych informacji bez konieczności opłacania dodatkowych subskrypcji.
 
