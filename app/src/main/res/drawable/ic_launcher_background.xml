@@ -1,0 +1,10 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:drawable="@android:color/transparent" /> <!-- Tło logo, można zmienić kolor -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#000000" /> <!-- Kolor koła, możesz zmienić -->
+            <size android:width="128dp" android:height="128dp" /> <!-- Rozmiar koła -->
+        </shape>
+    </item>
+</layer-list>
