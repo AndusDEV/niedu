@@ -17,5 +17,7 @@ Należy jednak zaznaczyć, że dostęp do powiadomień push w tej aplikacji nie 
 Aby rozpocząć korzystanie z **niedu**:
 1. **Pobierz aplikację:** Wejdź na [te stronę](https://github.com/AndusDEV/niedu/releases) i pobierz najnowszą wersję pliku `niedu.apk` (pierwsza którą zobaczysz).
 2. **Zainstaluj aplikację:** Otwórz pobrany plik `niedu.apk` i zainstaluj aplikację na swoim urządzeniu.
-3. **Zaloguj się:** Uruchom aplikację i zaloguj się do swojego konta na dzienniku.
-4. **Gotowe:** Po zalogowaniu wszystko powinno działać poprawnie! :D
+3. **Wybierz typ konta:** Uruchom aplikację. Wybierz swój typ konta dziennika (edu lub zwykłe).
+4. **(Jeżeli wybrałeś/aś konto zwykłe):** Wpisz swoje miasto (np. 'gdansk', 'bydgoszcz', 'torun'). Musi być wpisane z małej litery.
+5. **Zaloguj się:** Zaloguj się do swojego konta na dzienniku.
+6. **Gotowe:** Po zalogowaniu wszystko powinno działać poprawnie! :D
