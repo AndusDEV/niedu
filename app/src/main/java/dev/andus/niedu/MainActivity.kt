@@ -114,11 +114,7 @@ class MainActivity : AppCompatActivity() {
             val selectedType = options[which]
             saveJournalType(selectedType)
             Toast.makeText(this, "Wybrano: $selectedType", Toast.LENGTH_SHORT).show()
-            if (selectedType == "zwykły") {
-                showCityInputDialog()
-            } else {
-                loadLoginPage()
-            }
+            loadLoginPage()
         }
         builder.show()
     }
