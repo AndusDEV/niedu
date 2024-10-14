@@ -50,13 +50,13 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("SetJavaScriptEnabled")
     private fun setupWebView() {
         webView.webViewClient = object : WebViewClient() {
-            override fun onPageFinished(view: WebView?, url: String?) {
-                super.onPageFinished(view, url)
-                if (url != null && url.contains("/App/")) {
-                    saveBaseUrl(url)
-                    extractCity(url)
-                }
-            }
+//            override fun onPageFinished(view: WebView?, url: String?) {
+//                super.onPageFinished(view, url)
+//                if (url != null && url.contains("/App/")) {
+//                    saveBaseUrl(url)
+//                    extractCity(url)
+//                }
+//            }
         }
 
         val webSettings: WebSettings = webView.settings
@@ -74,16 +74,16 @@ class MainActivity : AppCompatActivity() {
         cookieManager.setAcceptCookie(true)
     }
 
-    private fun loadUrl(endpoint: String) {
-        if (baseUrl == null) {
-            loadLoginPage()
-        } else {
-            val fullUrl = "$baseUrl$endpoint"
-            if (webView.url != fullUrl) {
-                webView.loadUrl(fullUrl)
-            }
-        }
-    }
+//    private fun loadUrl(endpoint: String) {
+//        if (baseUrl == null) {
+//            loadLoginPage()
+//        } else {
+//            val fullUrl = "$baseUrl$endpoint"
+//            if (webView.url != fullUrl) {
+//                webView.loadUrl(fullUrl)
+//            }
+//        }
+//    }
 
     private fun loadLoginPage() {
         if (journalType == "zwykły" && city == null) {
@@ -97,26 +97,26 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun saveBaseUrl(url: String) {
-        val currentBaseUrl = getBaseUrl()
-        val newBaseUrl = url.substringBeforeLast("/")
+//    private fun saveBaseUrl(url: String) {
+//        val currentBaseUrl = getBaseUrl()
+//        val newBaseUrl = url.substringBeforeLast("/")
+//
+//        if (currentBaseUrl == null || currentBaseUrl != newBaseUrl) {
+//            with(sharedPreferences.edit()) {
+//                putString("base_url", newBaseUrl)
+//                apply()
+//                baseUrl = newBaseUrl
+//                println("Zapisano baseUrl: $newBaseUrl")
+//            }
+//        } else {
+//            println("BaseUrl już ustawione: $currentBaseUrl")
+//        }
+//    }
 
-        if (currentBaseUrl == null || currentBaseUrl != newBaseUrl) {
-            with(sharedPreferences.edit()) {
-                putString("base_url", newBaseUrl)
-                apply()
-                baseUrl = newBaseUrl
-                println("Zapisano baseUrl: $newBaseUrl")
-            }
-        } else {
-            println("BaseUrl już ustawione: $currentBaseUrl")
-        }
-    }
-
-    private fun extractCity(url: String) {
-        city = url.substringAfter("${getDomain()}/").substringBefore("/App")
-        println("Wyciągnięto miasto: $city")
-    }
+//    private fun extractCity(url: String) {
+//        city = url.substringAfter("${getDomain()}/").substringBefore("/App")
+//        println("Wyciągnięto miasto: $city")
+//    }
 
     private fun getBaseUrl(): String? {
         return sharedPreferences.getString("base_url", null)
@@ -126,12 +126,12 @@ class MainActivity : AppCompatActivity() {
         return sharedPreferences.getString("journal_type", null)
     }
 
-    private fun getDomain(): String {
-        return when (journalType) {
-            "zwykły" -> "dziennik-uczen.vulcan.net.pl"
-            else -> "uczen.eduvulcan.pl"
-        }
-    }
+//    private fun getDomain(): String {
+//        return when (journalType) {
+//            "zwykły" -> "dziennik-uczen.vulcan.net.pl"
+//            else -> "uczen.eduvulcan.pl"
+//        }
+//    }
 
     private fun saveJournalType(type: String) {
         with(sharedPreferences.edit()) {
