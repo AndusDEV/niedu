@@ -8,9 +8,12 @@ import android.webkit.CookieManager
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.EditText
 import android.widget.FrameLayout
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.tabs.TabLayout
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,37 +21,30 @@ class MainActivity : AppCompatActivity() {
     private lateinit var sharedPreferences: SharedPreferences
     private var baseUrl: String? = null
     private var city: String? = null
+    private var journalType: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
         sharedPreferences = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+
+        journalType = getJournalType()
+        if (journalType == null) {
+            showJournalTypeDialog()
+        }
+
         baseUrl = getBaseUrl()
-        val tabLayout = findViewById<TabLayout>(R.id.tabLayout)
         webView = WebView(this)
         val frameLayout = findViewById<FrameLayout>(R.id.frameLayout)
         frameLayout.addView(webView)
         setupWebView()
 
-        tabLayout.addTab(tabLayout.newTab().setText("Strona główna"))
-        tabLayout.addTab(tabLayout.newTab().setText("Wiadomości"))
-        tabLayout.addTab(tabLayout.newTab().setText("Frekwencja"))
-        tabLayout.addTab(tabLayout.newTab().setText("Oceny"))
-        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                when (tab?.position) {
-                    0 -> loadUrl("/tablica") // Strona główna
-                    1 -> loadMessagesUrl() // Wiadomości
-                    2 -> loadUrl("/frekwencja") // Frekwencja
-                    3 -> loadUrl("/oceny") // Oceny
-                }
-            }
+        val fab = findViewById<FloatingActionButton>(R.id.changeAccountFab)
+        fab.setOnClickListener {
+            showJournalTypeDialog()
+        }
 
-            override fun onTabUnselected(tab: TabLayout.Tab?) {}
-            override fun onTabReselected(tab: TabLayout.Tab?) {}
-        })
-
-        webView.loadUrl("https://eduvulcan.pl/logowanie")
+        loadLoginPage()
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -80,7 +76,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun loadUrl(endpoint: String) {
         if (baseUrl == null) {
-            webView.loadUrl("https://eduvulcan.pl/logowanie")
+            loadLoginPage()
         } else {
             val fullUrl = "$baseUrl$endpoint"
             if (webView.url != fullUrl) {
@@ -89,19 +85,23 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadMessagesUrl() {
-        if (city != null) {
-            val messagesUrl = "https://wiadomosci.eduvulcan.pl/$city/App/odebrane"
-            webView.loadUrl(messagesUrl)
+    private fun loadLoginPage() {
+        if (journalType == "zwykły" && city == null) {
+            showCityInputDialog()
         } else {
-            webView.loadUrl("https://eduvulcan.pl/logowanie")
+            val loginUrl = when (journalType) {
+                "zwykły" -> "https://dziennik-uczen.vulcan.net.pl/$city/LoginEndpoint.aspx"
+                else -> "https://eduvulcan.pl/logowanie"
+            }
+            webView.loadUrl(loginUrl)
         }
     }
 
     private fun saveBaseUrl(url: String) {
         val currentBaseUrl = getBaseUrl()
-        if (currentBaseUrl == null) {
-            val newBaseUrl = url.substringBeforeLast("/")
+        val newBaseUrl = url.substringBeforeLast("/")
+
+        if (currentBaseUrl == null || currentBaseUrl != newBaseUrl) {
             with(sharedPreferences.edit()) {
                 putString("base_url", newBaseUrl)
                 apply()
@@ -114,12 +114,69 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun extractCity(url: String) {
-        city = url.substringAfter("uczen.eduvulcan.pl/").substringBefore("/App")
+        city = url.substringAfter("${getDomain()}/").substringBefore("/App")
         println("Wyciągnięto miasto: $city")
     }
 
     private fun getBaseUrl(): String? {
         return sharedPreferences.getString("base_url", null)
+    }
+
+    private fun getJournalType(): String? {
+        return sharedPreferences.getString("journal_type", null)
+    }
+
+    private fun getDomain(): String {
+        return when (journalType) {
+            "zwykły" -> "dziennik-uczen.vulcan.net.pl"
+            else -> "uczen.eduvulcan.pl"
+        }
+    }
+
+    private fun saveJournalType(type: String) {
+        with(sharedPreferences.edit()) {
+            putString("journal_type", type)
+            apply()
+        }
+        journalType = type
+    }
+
+    private fun showJournalTypeDialog() {
+        val options = arrayOf("edu", "zwykły")
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Wybierz typ dziennika")
+        builder.setItems(options) { _, which ->
+            val selectedType = options[which]
+            saveJournalType(selectedType)
+            Toast.makeText(this, "Wybrano: $selectedType", Toast.LENGTH_SHORT).show()
+            if (selectedType == "zwykły") {
+                showCityInputDialog()
+            } else {
+                loadLoginPage()
+            }
+        }
+        builder.show()
+    }
+
+    private fun showCityInputDialog() {
+        val input = EditText(this)
+        input.hint = "Wpisz miasto"
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("Wpisz miasto")
+            .setView(input)
+            .setPositiveButton("OK") { _, _ ->
+                val cityInput = input.text.toString()
+                if (cityInput.isNotEmpty()) {
+                    city = cityInput
+                    loadLoginPage()
+                } else {
+                    Toast.makeText(this, "Miasto nie może być puste", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("Anuluj") { dialog, _ -> dialog.cancel() }
+            .create()
+
+        dialog.show()
     }
 
     override fun onBackPressed() {
