@@ -22,6 +22,7 @@ class MainActivity : AppCompatActivity() {
     private var baseUrl: String? = null
     private var city: String? = null
     private var journalType: String? = null
+    private lateinit var webViewLoader: WebViewLoader
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,18 +40,25 @@ class MainActivity : AppCompatActivity() {
         val frameLayout = findViewById<FrameLayout>(R.id.frameLayout)
         frameLayout.addView(webView)
         setupWebView()
+        webViewLoader = WebViewLoader(this, webView)
 
         val fab = findViewById<FloatingActionButton>(R.id.changeAccountFab)
         fab.setOnClickListener {
             showJournalTypeDialog()
         }
-
         loadLoginPage()
     }
 
     @SuppressLint("SetJavaScriptEnabled")
     private fun setupWebView() {
-        webView.webViewClient = WebViewClient()
+        webView.webViewClient = object : WebViewClient() {
+            override fun onPageFinished(view: WebView?, url: String?) {
+                super.onPageFinished(view, url)
+                url?.let {
+                    webViewLoader.loadAndApplyPatches(it)
+                }
+            }
+        }
 
         val webSettings: WebSettings = webView.settings
         webSettings.javaScriptEnabled = true
