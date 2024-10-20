@@ -1,5 +1,3 @@
-import { clickOnAside } from "../apis/aside.js";
-
 const isEduVulcan = () => !window.location.hostname.startsWith("dziennik");
 
 const getLogoElement = () =>
@@ -25,9 +23,8 @@ function setUpRedirectToBoard() {
     }
 }
 
-window.appendModule({
-    isLoaded: getLogoElement,
-    onlyOnReloads: true,
-    run: setUpRedirectToBoard,
-    doesRunHere: () => !!window.location.hostname.match(/^(dziennik-)?(wiadomosci|uczen).*/)
-})
+document.addEventListener("DOMContentLoaded", (event) => {
+    if (!!window.location.hostname.match(/^(dziennik-)?(wiadomosci|uczen).*/)) {
+        getLogoElement()
+    }
+});

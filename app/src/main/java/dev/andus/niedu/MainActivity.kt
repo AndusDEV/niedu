@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
-        sharedPreferences = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        sharedPreferences = getSharedPreferences("app_prefs", MODE_PRIVATE)
 
         journalType = getJournalType()
         if (journalType == null) {
@@ -62,7 +62,8 @@ class MainActivity : AppCompatActivity() {
 
         val webSettings: WebSettings = webView.settings
         webSettings.javaScriptEnabled = true
-        webSettings.cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
+        webSettings.cacheMode = WebSettings.LOAD_NO_CACHE
+        webSettings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
         webSettings.allowFileAccess = true
         webSettings.domStorageEnabled = true
         webSettings.useWideViewPort = true

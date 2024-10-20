@@ -1,5 +1,3 @@
-import { waitForRender } from "../apis/waitForElement.js";
-
 const SEMESTERS = 2;
 const renderVisibilityButtons = () => {
     for (let i = 0; i < SEMESTERS; i++) {
@@ -50,13 +48,8 @@ const hideEmptyFinalGradesInfo = async (i) => {
     }
 };
 
-window.appendModule({
-    run: renderVisibilityButtons,
-    onlyOnReloads: false,
-    doesRunHere: () =>
-        window.location.pathname.endsWith("oceny") && window.innerWidth < 1024,
-    isLoaded: () =>
-        document.querySelector(
-            "section > section > .mobile__frame > .content-container",
-        ),
+document.addEventListener("DOMContentLoaded", (event) => {
+    if (window.location.pathname.endsWith("oceny") && window.innerWidth < 1024) {
+        renderVisibilityButtons()
+    }
 });

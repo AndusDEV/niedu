@@ -9,7 +9,6 @@ import java.io.FileNotFoundException
 import java.lang.Exception
 
 class WebViewLoader(private val context: Context, private val webView: WebView) {
-
     // Function to load and apply patches
     fun loadAndApplyPatches(currentUrl: String) {
         try {
@@ -101,18 +100,17 @@ class WebViewLoader(private val context: Context, private val webView: WebView) 
     private fun injectJavaScript(scripts: List<String>) {
         scripts.forEach { script ->
             val moduleScript = """
-            (function() {
-                const scriptContent = `${script.replace("`", "\\`").replace("$", "\\$")}`; // Escape backticks and dollar signs
-                const script = document.createElement('script');
-                script.type = 'module';
-                script.textContent = scriptContent; 
-                document.head.appendChild(script);
-            })();
+        (function() {
+            console.log('Injecting script');
+            const scriptContent = `${script.replace("`", "\\`").replace("$", "\\$")}`;
+            console.log('Script content:', scriptContent);
+            const script = document.createElement('script');
+            script.type = 'module';
+            script.textContent = scriptContent;
+            document.head.appendChild(script);
+        })();
         """.trimIndent()
             webView.evaluateJavascript(moduleScript, null)
-        }
-        webView.evaluateJavascript("document.documentElement.outerHTML") { html ->
-            Log.d("WebViewLoader", "Website Source Code: $html")
         }
     }
 }

@@ -1,6 +1,3 @@
-import { waitForRender } from "./apis/waitForElement.js";
-import { getFromAside } from "./apis/aside.js";
-
 async function move() {
     const inner = await getFromAside(
         async () => {
@@ -23,11 +20,8 @@ async function move() {
         .appendChild(messages);
 }
 
-window.appendModule({
-    run: move,
-    doesRunHere: () =>
-        window.location.hostname.match(/^(dziennik-)?(uczen).*/) &&
-        window.innerWidth < 1024,
-    onlyOnReloads: true,
-    isLoaded: () => !!document.querySelector(".header__hamburger__icon")
+document.addEventListener("DOMContentLoaded", (event) => {
+    if (window.location.hostname.match(/^(dziennik-)?(uczen).*/) && window.innerWidth < 1024) {
+        move()
+    }
 });
