@@ -32,8 +32,12 @@ function fixLoginPage() {
     swapLoginInput();
 }
 
-document.addEventListener("DOMContentLoaded", (event) => {
-    if (["eduvulcan.pl", "dziennik-logowanie.vulcan.net.pl"].includes(window.location.hostname)) {
-        fixLoginPage()
-    }
+window.appendModule({
+    isLoaded: () => document.querySelector("#Haslo"),
+    onlyOnReloads: true,
+    run: fixLoginPage,
+    doesRunHere: () =>
+        ["eduvulcan.pl", "dziennik-logowanie.vulcan.net.pl"].includes(
+            window.location.hostname,
+        ),
 });

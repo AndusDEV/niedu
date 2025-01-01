@@ -4,10 +4,12 @@ function redirectToLoginPage() {
   }/LoginEndpoint.aspx`;
 }
 
-document.addEventListener("DOMContentLoaded", (event) => {
-    if (window.location.hostname === "dziennik-uczen.vulcan.net.pl" && !window.location.pathname.split("/")[2]) {
-        redirectToLoginPage()
-    }
+window.appendModule({
+  onlyOnReloads: true,
+  run: redirectToLoginPage,
+  doesRunHere: () =>
+    window.location.hostname === "dziennik-uczen.vulcan.net.pl" &&
+    !window.location.pathname.split("/")[2],
 });
 
 const pathSegment = window.location.pathname.split("/")[1];

@@ -15,8 +15,9 @@ const setHighlights = () => {
     }
 }
 
-document.addEventListener("DOMContentLoaded", (event) => {
-    if (window.location.hostname.match(/^(dziennik-)?(uczen).*/) && window.innerWidth < 1024) {
-        setHighlights()
-    }
-});
+window.appendModule({
+    run: setHighlights,
+    onlyOnReloads: false,
+    isLoaded: () => document.querySelector(".bottom-navigation-bar")?.children?.length,
+    doesRunHere: () => window.location.hostname.match(/^(dziennik-)?(uczen).*/) && window.innerWidth < 1024,
+})
