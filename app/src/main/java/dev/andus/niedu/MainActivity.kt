@@ -11,12 +11,16 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.mozilla.geckoview.GeckoSessionSettings
+import org.mozilla.geckoview.WebExtension
+import org.mozilla.geckoview.WebExtensionController
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var geckoView: GeckoView
     private lateinit var geckoSession: GeckoSession
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var runtime: GeckoRuntime
+    private lateinit var extensionController: WebExtensionController
     private var baseUrl: String? = null
     private var city: String? = null
     private var journalType: String? = null
@@ -42,11 +46,14 @@ class MainActivity : AppCompatActivity() {
             showJournalTypeDialog()
         }
 
+        installIfv()
         loadLoginPage()
     }
 
     private fun setupGeckoView() {
-        val runtime = GeckoRuntime.create(this)
+        runtime = GeckoRuntime.create(this)
+        extensionController = runtime.webExtensionController
+
         val settings = GeckoSessionSettings.Builder()
             .allowJavascript(true)
             .userAgentMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE)
@@ -56,6 +63,23 @@ class MainActivity : AppCompatActivity() {
         geckoSession.navigationDelegate = navigationDelegate
         geckoSession.open(runtime)
         geckoView.setSession(geckoSession)
+    }
+
+    private fun installIfv() {
+        runtime.webExtensionController.installBuiltIn(
+            "resource://android/assets/ifv/"
+        ).accept(
+            { extension ->
+                runOnUiThread {
+                    Toast.makeText(this, "Zainstalowano IFV", Toast.LENGTH_SHORT).show()
+                }
+            },
+            { throwable ->
+                runOnUiThread {
+                    Toast.makeText(this, "Błąd instalacji IFV: ${throwable!!.message}", Toast.LENGTH_LONG).show()
+                }
+            }
+        )
     }
 
     private fun loadLoginPage() {
