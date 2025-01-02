@@ -11,7 +11,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.mozilla.geckoview.GeckoSessionSettings
-import org.mozilla.geckoview.WebExtension
 import org.mozilla.geckoview.WebExtensionController
 
 class MainActivity : AppCompatActivity() {
