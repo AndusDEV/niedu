@@ -11,8 +11,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <WebView
-            android:id="@+id/webView"
+        <org.mozilla.geckoview.GeckoView
+            android:id="@+id/geckoView"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </FrameLayout>
@@ -23,8 +23,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:contentDescription="@string/wybor_dziennika"
-        app:srcCompat="@drawable/book"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/book" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

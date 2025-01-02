@@ -1,23 +1,21 @@
 package dev.andus.niedu
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.webkit.CookieManager
-import android.webkit.WebSettings
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import org.mozilla.geckoview.GeckoRuntime
+import org.mozilla.geckoview.GeckoSession
+import org.mozilla.geckoview.GeckoView
 import android.widget.EditText
-import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import org.mozilla.geckoview.GeckoSessionSettings
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var webView: WebView
+    private lateinit var geckoView: GeckoView
+    private lateinit var geckoSession: GeckoSession
     private lateinit var sharedPreferences: SharedPreferences
     private var baseUrl: String? = null
     private var city: String? = null
@@ -26,7 +24,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
-        sharedPreferences = getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
+        sharedPreferences = getSharedPreferences("app_prefs", MODE_PRIVATE)
 
         journalType = getJournalType()
         if (journalType == null) {
@@ -35,10 +33,9 @@ class MainActivity : AppCompatActivity() {
 
         city = getCity()
         baseUrl = getBaseUrl()
-        webView = WebView(this)
-        val frameLayout = findViewById<FrameLayout>(R.id.frameLayout)
-        frameLayout.addView(webView)
-        setupWebView()
+
+        geckoView = findViewById(R.id.geckoView)
+        setupGeckoView()
 
         val fab = findViewById<FloatingActionButton>(R.id.changeAccountFab)
         fab.setOnClickListener {
@@ -48,23 +45,17 @@ class MainActivity : AppCompatActivity() {
         loadLoginPage()
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
-    private fun setupWebView() {
-        webView.webViewClient = WebViewClient()
+    private fun setupGeckoView() {
+        val runtime = GeckoRuntime.create(this)
+        val settings = GeckoSessionSettings.Builder()
+            .allowJavascript(true)
+            .userAgentMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE)
+            .build()
 
-        val webSettings: WebSettings = webView.settings
-        webSettings.javaScriptEnabled = true
-        webSettings.cacheMode = WebSettings.LOAD_CACHE_ELSE_NETWORK
-        webSettings.allowFileAccess = true
-        webSettings.domStorageEnabled = true
-        webSettings.useWideViewPort = true
-        webSettings.loadWithOverviewMode = true
-        webSettings.builtInZoomControls = true
-        webSettings.setSupportZoom(true)
-        webSettings.mediaPlaybackRequiresUserGesture = false
-
-        val cookieManager: CookieManager = CookieManager.getInstance()
-        cookieManager.setAcceptCookie(true)
+        geckoSession = GeckoSession(settings)
+        geckoSession.navigationDelegate = navigationDelegate
+        geckoSession.open(runtime)
+        geckoView.setSession(geckoSession)
     }
 
     private fun loadLoginPage() {
@@ -75,7 +66,7 @@ class MainActivity : AppCompatActivity() {
                 "zwykły" -> "https://dziennik-uczen.vulcan.net.pl/$city/LoginEndpoint.aspx"
                 else -> "https://eduvulcan.pl/logowanie"
             }
-            webView.loadUrl(loginUrl)
+            geckoSession.loadUri(loginUrl)
         }
     }
 
@@ -141,11 +132,16 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
     }
 
+    @Deprecated("")
     override fun onBackPressed() {
-        if (webView.canGoBack()) {
-            webView.goBack()
+        if (navigationDelegate.canGoBack) {
+            geckoSession.goBack()
         } else {
             super.onBackPressed()
         }
+    }
+    override fun onDestroy() {
+        geckoSession.close()
+        super.onDestroy()
     }
 }
