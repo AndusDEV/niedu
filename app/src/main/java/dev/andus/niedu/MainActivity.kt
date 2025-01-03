@@ -65,19 +65,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun installIfv() {
-        runtime.webExtensionController.installBuiltIn(
-            "resource://android/assets/ifv/"
-        ).accept(
-            { extension ->
-                runOnUiThread {
-                    Toast.makeText(this, "Zainstalowano IFV", Toast.LENGTH_SHORT).show()
-                }
-            },
-            { throwable ->
-                runOnUiThread {
-                    Toast.makeText(this, "Błąd instalacji IFV: ${throwable!!.message}", Toast.LENGTH_LONG).show()
-                }
-            }
+        runtime.webExtensionController.ensureBuiltIn(
+            "resource://android/assets/ifv/",
+            "j.skup.test@gmail.com"
         )
     }
 
