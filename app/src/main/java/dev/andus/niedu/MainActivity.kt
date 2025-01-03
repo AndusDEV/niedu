@@ -69,6 +69,10 @@ class MainActivity : AppCompatActivity() {
             "resource://android/assets/ifv/",
             "j.skup.test@gmail.com"
         )
+        runtime.webExtensionController.ensureBuiltIn(
+            "resource://android/assets/autoLogin/",
+            "vulcan-auto-login@andus.dev"
+        )
     }
 
     private fun loadLoginPage() {
