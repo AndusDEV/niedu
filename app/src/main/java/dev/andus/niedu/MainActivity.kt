@@ -1,28 +1,28 @@
 package dev.andus.niedu
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.webkit.CookieManager
-import android.webkit.WebSettings
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import org.mozilla.geckoview.GeckoRuntime
+import org.mozilla.geckoview.GeckoSession
+import org.mozilla.geckoview.GeckoView
 import android.widget.EditText
-import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import org.mozilla.geckoview.GeckoSessionSettings
+import org.mozilla.geckoview.WebExtensionController
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var webView: WebView
+    private lateinit var geckoView: GeckoView
+    private lateinit var geckoSession: GeckoSession
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var runtime: GeckoRuntime
+    private lateinit var extensionController: WebExtensionController
     private var baseUrl: String? = null
     private var city: String? = null
     private var journalType: String? = null
-    private lateinit var webViewLoader: WebViewLoader
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,44 +36,49 @@ class MainActivity : AppCompatActivity() {
 
         city = getCity()
         baseUrl = getBaseUrl()
-        webView = WebView(this)
-        val frameLayout = findViewById<FrameLayout>(R.id.frameLayout)
-        frameLayout.addView(webView)
-        setupWebView()
-        webViewLoader = WebViewLoader(this, webView)
+
+        geckoView = findViewById(R.id.geckoView)
+        setupGeckoView()
 
         val fab = findViewById<FloatingActionButton>(R.id.changeAccountFab)
         fab.setOnClickListener {
             showJournalTypeDialog()
         }
+
+        installIfv()
         loadLoginPage()
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
-    private fun setupWebView() {
-        webView.webViewClient = object : WebViewClient() {
-            override fun onPageFinished(view: WebView?, url: String?) {
-                super.onPageFinished(view, url)
-                url?.let {
-                    webViewLoader.loadAndApplyPatches(it)
+    private fun setupGeckoView() {
+        runtime = GeckoRuntime.create(this)
+        extensionController = runtime.webExtensionController
+
+        val settings = GeckoSessionSettings.Builder()
+            .allowJavascript(true)
+            .userAgentMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE)
+            .build()
+
+        geckoSession = GeckoSession(settings)
+        geckoSession.navigationDelegate = navigationDelegate
+        geckoSession.open(runtime)
+        geckoView.setSession(geckoSession)
+    }
+
+    private fun installIfv() {
+        runtime.webExtensionController.installBuiltIn(
+            "resource://android/assets/ifv/"
+        ).accept(
+            { extension ->
+                runOnUiThread {
+                    Toast.makeText(this, "Zainstalowano IFV", Toast.LENGTH_SHORT).show()
+                }
+            },
+            { throwable ->
+                runOnUiThread {
+                    Toast.makeText(this, "Błąd instalacji IFV: ${throwable!!.message}", Toast.LENGTH_LONG).show()
                 }
             }
-        }
-
-        val webSettings: WebSettings = webView.settings
-        webSettings.javaScriptEnabled = true
-        webSettings.cacheMode = WebSettings.LOAD_NO_CACHE
-        webSettings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-        webSettings.allowFileAccess = true
-        webSettings.domStorageEnabled = true
-        webSettings.useWideViewPort = true
-        webSettings.loadWithOverviewMode = true
-        webSettings.builtInZoomControls = true
-        webSettings.setSupportZoom(true)
-        webSettings.mediaPlaybackRequiresUserGesture = false
-
-        val cookieManager: CookieManager = CookieManager.getInstance()
-        cookieManager.setAcceptCookie(true)
+        )
     }
 
     private fun loadLoginPage() {
@@ -84,7 +89,7 @@ class MainActivity : AppCompatActivity() {
                 "zwykły" -> "https://dziennik-uczen.vulcan.net.pl/$city/LoginEndpoint.aspx"
                 else -> "https://eduvulcan.pl/logowanie"
             }
-            webView.loadUrl(loginUrl)
+            geckoSession.loadUri(loginUrl)
         }
     }
 
@@ -150,11 +155,16 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
     }
 
+    @Deprecated("")
     override fun onBackPressed() {
-        if (webView.canGoBack()) {
-            webView.goBack()
+        if (navigationDelegate.canGoBack) {
+            geckoSession.goBack()
         } else {
             super.onBackPressed()
         }
+    }
+    override fun onDestroy() {
+        geckoSession.close()
+        super.onDestroy()
     }
 }

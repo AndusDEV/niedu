@@ -6,8 +6,8 @@ const startListening = () => {
     });
 }
 
-document.addEventListener("DOMContentLoaded", (event) => {
-    if (window.location.hostname !== "eduvulcan.pl") {
-        startListening()
-    }
-});
+window.appendModule({
+    run: startListening,
+    onlyOnReloads: true,
+    doesRunHere: () => window.location.hostname !== "eduvulcan.pl"
+})

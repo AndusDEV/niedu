@@ -38,8 +38,10 @@ const isRendered = () =>
         && !!document.querySelector(".tabsview")
         && !!document.querySelector("h1")
 
-document.addEventListener("DOMContentLoaded", (event) => {
-    if (isAttendancePage) {
-        createSelector()
-    }
-});
+
+window.appendModule({
+    isLoaded: isRendered,
+    run: createSelector,
+    onlyOnReloads: false,
+    doesRunHere: isAttendancePage
+})

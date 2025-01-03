@@ -33,8 +33,11 @@ function displayFullName() {
     );
 }
 
-document.addEventListener("DOMContentLoaded", (event) => {
-    if (!!window.location.hostname.match(/^(dziennik-)?(wiadomosci|uczen).*/)) {
-        displayFullName()
-    }
-});
+window.appendModule({
+    isLoaded: () => document.querySelector(
+        `.${isMessagesPage() ? "account__name span" : "side_student"}`,
+    ),
+    onlyOnReloads: true,
+    run: displayFullName,
+    doesRunHere: () => !!window.location.hostname.match(/^(dziennik-)?(wiadomosci|uczen).*/)
+})

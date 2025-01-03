@@ -1,3 +1,7 @@
+import { waitForRender } from "../apis/waitForElement.js";
+import { executeActionOnAside, getFromAside } from "../apis/aside.js";
+import { getUserData } from "../apis/getUserData.js";
+
 const toggleModal = () => {
     document.querySelector(".modal-background").classList.toggle("active");
     document.querySelector(".modal-user").classList.toggle("active");
@@ -76,8 +80,13 @@ const moveUserOptionsToHeader = async () => {
         .appendChild(userAvatar);
 };
 
-document.addEventListener("DOMContentLoaded", (event) => {
-    if (!!window.location.hostname.match(/^(dziennik-)?(wiadomosci|uczen).*/) && window.innerWidth < 1024) {
-        moveUserOptionsToHeader()
-    }
+window.appendModule({
+    isLoaded: () =>
+        document.querySelector(".header__logo-product")?.firstChild &&
+        document.querySelector(".header__hamburger__icon button"),
+    onlyOnReloads: true,
+    run: moveUserOptionsToHeader,
+    doesRunHere: () =>
+        !!window.location.hostname.match(/^(dziennik-)?(wiadomosci|uczen).*/) &&
+        window.innerWidth < 1024,
 });
