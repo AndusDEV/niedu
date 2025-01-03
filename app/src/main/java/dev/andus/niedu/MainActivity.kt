@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var runtime: GeckoRuntime
     private lateinit var extensionController: WebExtensionController
     private var baseUrl: String? = null
-    private var city: String? = null
+    private var symbol: String? = null
     private var journalType: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
             showJournalTypeDialog()
         }
 
-        city = getCity()
+        symbol = getSymbol()
         baseUrl = getBaseUrl()
 
         geckoView = findViewById(R.id.geckoView)
@@ -60,48 +60,43 @@ class MainActivity : AppCompatActivity() {
 
         geckoSession = GeckoSession(settings)
         geckoSession.navigationDelegate = navigationDelegate
+
         geckoSession.open(runtime)
         geckoView.setSession(geckoSession)
     }
 
     private fun installIfv() {
-        runtime.webExtensionController.installBuiltIn(
-            "resource://android/assets/ifv/"
-        ).accept(
-            { extension ->
-                runOnUiThread {
-                    Toast.makeText(this, "Zainstalowano IFV", Toast.LENGTH_SHORT).show()
-                }
-            },
-            { throwable ->
-                runOnUiThread {
-                    Toast.makeText(this, "Błąd instalacji IFV: ${throwable!!.message}", Toast.LENGTH_LONG).show()
-                }
-            }
+        runtime.webExtensionController.ensureBuiltIn(
+            "resource://android/assets/ifv/",
+            "j.skup.test@gmail.com"
+        )
+        runtime.webExtensionController.ensureBuiltIn(
+            "resource://android/assets/autoLogin/",
+            "vulcan-auto-login@andus.dev"
         )
     }
 
     private fun loadLoginPage() {
-        if (journalType == "zwykły" && city == null) {
-            showCityInputDialog()
+        if (journalType == "zwykły" && symbol == null) {
+            showSymbolInputDialog()
         } else {
             val loginUrl = when (journalType) {
-                "zwykły" -> "https://dziennik-uczen.vulcan.net.pl/$city/LoginEndpoint.aspx"
+                "zwykły" -> "https://dziennik-uczen.vulcan.net.pl/$symbol/LoginEndpoint.aspx"
                 else -> "https://eduvulcan.pl/logowanie"
             }
             geckoSession.loadUri(loginUrl)
         }
     }
 
-    private fun saveCity(city: String) {
+    private fun saveSymbol(symbol: String) {
         with(sharedPreferences.edit()) {
-            putString("city", city)
+            putString("symbol", symbol)
             apply()
         }
     }
 
-    private fun getCity(): String? {
-        return sharedPreferences.getString("city", null)
+    private fun getSymbol(): String? {
+        return sharedPreferences.getString("symbol", null)
     }
 
     private fun getBaseUrl(): String? {
@@ -133,20 +128,20 @@ class MainActivity : AppCompatActivity() {
         builder.show()
     }
 
-    private fun showCityInputDialog() {
+    private fun showSymbolInputDialog() {
         val input = EditText(this)
-        input.hint = "Wpisz miasto"
+        input.hint = "Wpisz symbol"
         val dialog = AlertDialog.Builder(this)
-            .setTitle("Wpisz miasto")
+            .setTitle("Wpisz symbol")
             .setView(input)
             .setPositiveButton("OK") { _, _ ->
-                val cityInput = input.text.toString()
-                if (cityInput.isNotEmpty()) {
-                    city = cityInput
-                    saveCity(cityInput)
+                val symbolInput = input.text.toString()
+                if (symbolInput.isNotEmpty()) {
+                    symbol = symbolInput
+                    saveSymbol(symbolInput)
                     loadLoginPage()
                 } else {
-                    Toast.makeText(this, "Miasto nie może być puste", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Symbol nie może być pusty", Toast.LENGTH_SHORT).show()
                 }
             }
             .setNegativeButton("Anuluj") { dialog, _ -> dialog.cancel() }
