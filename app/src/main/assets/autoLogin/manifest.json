@@ -7,7 +7,8 @@
 	"permissions": ["storage"],
 	"host_permissions": [
 		"*://dziennik-uczen.vulcan.net.pl/*/LoginEndpoint.aspx",
-		"*://eduvulcan.pl/logowanie"
+		"*://eduvulcan.pl/logowanie",
+		"*://eduvulcan.pl/"
 	],
 
 	"browser_specific_settings": {
@@ -19,12 +20,27 @@
 
 	"content_scripts": [
 		{
+			"js": ["loading.js"],
+			"css": ["loader.css"],
+			"matches": [
+				"*://eduvulcan.pl/logowanie",
+				"*://eduvulcan.pl/",
+				"*://dziennik-uczen.vulcan.net.pl/*/LoginEndpoint.aspx"
+			],
+			"run_at": "document_end"
+		},
+		{
 			"js": ["prometeusz.js"],
-			"matches": ["*://eduvulcan.pl/logowanie"]
+			"matches": [
+				"*://eduvulcan.pl/logowanie",
+				"*://eduvulcan.pl/"
+			],
+			"run_at": "document_end"
 		},
 		{
 			"js": ["efeb.js"],
-			"matches": ["*://dziennik-uczen.vulcan.net.pl/*/LoginEndpoint.aspx"]
+			"matches": ["*://dziennik-uczen.vulcan.net.pl/*/LoginEndpoint.aspx"],
+			"run_at": "document_end"
 		},
 		{
 			"js": ["logout.js"],
