@@ -1,30 +1,22 @@
 const aliasField = document.getElementById('Alias');
 const passwordField = document.getElementById('Password');
+const loginButton = document.getElementById('btLogOn');
 
-if (localStorage.getItem('Alias') !== null && localStorage.getItem('Password') !== null) {
-    aliasField.value = localStorage.getItem('Alias');
-    passwordField.value = localStorage.getItem('Password');
-    document.getElementById('btLogOn').click();
-
-    if (isErrorMessageVisible()) {
-        localStorage.removeItem('Alias');
-        localStorage.removeItem('Password');
-    }
+if (localStorage.getItem('Alias') != null && localStorage.getItem('Password') != null && sessionStorage.getItem('triedLoggingIn') === null) {
+	aliasField.value = localStorage.getItem('Alias');
+	passwordField.value = localStorage.getItem('Password');
+	loginButton.click();
+	sessionStorage.setItem('triedLoggingIn', '1');
 } else {
-    aliasField.addEventListener('input', () => {
-        localStorage.setItem('Alias', aliasField.value);
-    });
-    passwordField.addEventListener('input', () => {
-        localStorage.setItem('Password', passwordField.value);
-    });
-}
-
-function isErrorMessageVisible() {
-    document.getElementsByClassName('error-message').forEach(element => {
-        if (element.style.display !== 'none') {
-            return true;
-        }
-    });
-
-    return false;
+	if (sessionStorage.getItem('triedLoggingIn') === '1') {
+		document.querySelectorAll('.message-error').forEach(e => {
+			e.innerHTML = "Wygląda na to, że niedu ma zapisane błędne dane logowania lub Vulcan wymaga uzupełnienia Captchy. Proszę zalogować się ręcznie.";
+		});
+	}
+	aliasField.addEventListener('input', () => {
+		localStorage.setItem('Alias', aliasField.value);
+	});
+	passwordField.addEventListener('input', () => {
+		localStorage.setItem('Password', passwordField.value);
+	});
 }
