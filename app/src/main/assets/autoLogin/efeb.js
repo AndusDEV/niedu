@@ -1,8 +1,4 @@
-if (window.location.href.includes('logowanie')) {
-	fillLoginForm();
-} else {
-	autoSelectAccountIfOnlyOnePresent();
-}
+fillLoginForm();
 
 function fillLoginForm() {
 	const loginField = document.getElementById('Login');
@@ -33,10 +29,4 @@ function fillLoginForm() {
 			});
 		}
 	});
-}
-
-function autoSelectAccountIfOnlyOnePresent() {
-	if (document.querySelectorAll('a.connected-account').length === 1) {
-		document.querySelectorAll('a.connected-account')[0].click();
-	}
 }
