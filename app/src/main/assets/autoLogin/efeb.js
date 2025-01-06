@@ -7,8 +7,8 @@ function fillLoginForm() {
 	const triedLoggingIn = sessionStorage.getItem('triedLoggingIn');
 
 	browser.storage.local.get().then((result) => {
-		const login = result.Login;
-		const haslo = result.Haslo;
+		const login = result?.Login;
+		const haslo = result?.Haslo;
 
 		if (login !== undefined && haslo !== undefined && triedLoggingIn === null) {
 			loginField.value = login;

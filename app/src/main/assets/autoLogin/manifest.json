@@ -21,25 +21,23 @@
 	"content_scripts": [
 		{
 			"js": ["loading.js"],
-			"css": ["loader.css"],
 			"matches": [
 				"*://eduvulcan.pl/logowanie",
 				"*://eduvulcan.pl/",
-				"*://dziennik-uczen.vulcan.net.pl/*/LoginEndpoint.aspx"
+				"*://dziennik-logowanie.vulcan.net.pl/*/Account/Logon*"
 			],
-			"run_at": "document_end"
+			"run_at": "document_start"
 		},
 		{
 			"js": ["prometeusz.js"],
-			"matches": [
-				"*://eduvulcan.pl/logowanie",
-				"*://eduvulcan.pl/"
-			],
+			"matches": ["*://eduvulcan.pl/logowanie", "*://eduvulcan.pl/"],
 			"run_at": "document_end"
 		},
 		{
 			"js": ["efeb.js"],
-			"matches": ["*://dziennik-uczen.vulcan.net.pl/*/LoginEndpoint.aspx"],
+			"matches": [
+				"*://dziennik-logowanie.vulcan.net.pl/*/Account/Logon*"
+			],
 			"run_at": "document_end"
 		},
 		{
@@ -47,7 +45,8 @@
 			"matches": [
 				"*://eduvulcan.pl/wylogowanie",
 				"*://dziennik-uczen.vulcan.net.pl/*/nie-wiem-jaki-endpoint"
-			]
+			],
+			"run_at": "document_start"
 		}
 	]
 }
