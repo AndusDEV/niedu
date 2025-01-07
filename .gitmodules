@@ -1,0 +1,3 @@
+[submodule "app/src/main/assets/ifv"]
+	path = app/src/main/assets/ifv
+	url = https://github.com/banocean/ifv
