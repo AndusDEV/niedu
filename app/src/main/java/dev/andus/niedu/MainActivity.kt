@@ -1,6 +1,8 @@
 package dev.andus.niedu
 
 import android.content.SharedPreferences
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import org.mozilla.geckoview.GeckoRuntime
 import org.mozilla.geckoview.GeckoSession
@@ -61,23 +63,23 @@ class MainActivity : AppCompatActivity() {
         geckoSession = GeckoSession(settings)
         geckoSession.navigationDelegate = navigationDelegate
     
-        // Linki target="_blank"
         geckoSession.contentDelegate = object : GeckoSession.ContentDelegate {
             override fun onLoadRequest(
                 session: GeckoSession,
-                request: GeckoSession.LoadRequest
-            ): GeckoSession.LoadResponse? {
-                if (request.flags and GeckoSession.LoadRequest.FLAG_IS_REDIRECT == 0) {
-                    openInExternalBrowser(request.uri)
-                    return GeckoSession.LoadResponse.CANCEL
+                request: GeckoSession.WebRequest
+            ): GeckoSession.WebResponse? {
+                if (request.isRedirect == false && request.uri != null) {
+                    openInExternalBrowser(request.uri!!)
+                    return GeckoSession.WebResponse.CANCEL
                 }
-                return super.onLoadRequest(session, request)
+                return null
             }
         }
     
         geckoSession.open(runtime)
         geckoView.setSession(geckoSession)
     }
+
     
     private fun openInExternalBrowser(url: String) {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
