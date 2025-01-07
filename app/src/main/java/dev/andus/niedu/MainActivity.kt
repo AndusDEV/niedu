@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     private var baseUrl: String? = null
     private var symbol: String? = null
     private var journalType: String? = null
+    val navigationDelegate = MyNavigationDelegate(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +46,7 @@ class MainActivity : AppCompatActivity() {
             showJournalTypeDialog()
         }
 
-        installIfv()
+        installExtensions()
         loadLoginPage()
     }
 
@@ -65,7 +66,7 @@ class MainActivity : AppCompatActivity() {
         geckoView.setSession(geckoSession)
     }
 
-    private fun installIfv() {
+    private fun installExtensions() {
         runtime.webExtensionController.ensureBuiltIn(
             "resource://android/assets/ifv/",
             "j.skup.test@gmail.com"
