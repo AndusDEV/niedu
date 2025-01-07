@@ -1,6 +1,7 @@
 [versions]
 agp = "8.7.0"
 geckoview = "133.0.20241209150345"
+andXbrowser = "1.8.0"
 kotlin = "2.0.0"
 coreKtx = "1.10.1"
 junit = "4.13.2"
@@ -15,6 +16,7 @@ material = "1.12.0"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 geckoview = { module = "org.mozilla.geckoview:geckoview", version.ref = "geckoview" }
+androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "andXbrowser" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

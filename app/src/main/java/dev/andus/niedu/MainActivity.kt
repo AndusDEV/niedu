@@ -1,8 +1,6 @@
 package dev.andus.niedu
 
 import android.content.SharedPreferences
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import org.mozilla.geckoview.GeckoRuntime
 import org.mozilla.geckoview.GeckoSession
@@ -25,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     private var baseUrl: String? = null
     private var symbol: String? = null
     private var journalType: String? = null
+    val navigationDelegate = MyNavigationDelegate(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +46,7 @@ class MainActivity : AppCompatActivity() {
             showJournalTypeDialog()
         }
 
-        installIfv()
+        installExtensions()
         loadLoginPage()
     }
 
@@ -62,31 +61,13 @@ class MainActivity : AppCompatActivity() {
 
         geckoSession = GeckoSession(settings)
 
-        geckoSession.contentDelegate = object : GeckoSession.ContentDelegate {
-            override fun onLoadRequest(
-                session: GeckoSession,
-                request: GeckoSession.ContentDelegate.LoadRequest
-            ): GeckoSession.ContentDelegate.LoadResponse? {
-                if (!request.isRedirect && request.uri != null) {
-                    openInExternalBrowser(request.uri!!)
-                    return GeckoSession.ContentDelegate.LoadResponse.CANCEL
-                }
-                return null
-            }
-        }
+        geckoSession.navigationDelegate = navigationDelegate
 
         geckoSession.open(runtime)
         geckoView.setSession(geckoSession)
     }
 
-
-    
-    private fun openInExternalBrowser(url: String) {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-        startActivity(intent)
-    }
-
-    private fun installIfv() {
+    private fun installExtensions() {
         runtime.webExtensionController.ensureBuiltIn(
             "resource://android/assets/ifv/",
             "j.skup.test@gmail.com"

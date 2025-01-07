@@ -11,14 +11,14 @@ function fillLoginForm() {
 	const triedLoggingIn = sessionStorage.getItem('triedLoggingIn');
 
 	browser.storage.local.get().then((result) => {
-		const alias = result.Alias;
-		const password = result.Password;
+		const alias = result?.Alias;
+		const password = result?.Password;
 
 		if (alias !== undefined && password !== undefined && triedLoggingIn === null) {
 			aliasField.value = alias;
 			passwordField.value = password;
 			loginButton.click();
-			sessionStorage.setItem("triedLoggingIn", "1" );
+			sessionStorage.setItem("triedLoggingIn", "1");
 		} else {
 			if (triedLoggingIn === "1") {
 				document.querySelectorAll('.message-error').forEach(e => {
