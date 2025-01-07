@@ -1,3 +1,0 @@
-.tile:has(.tile__content .tile__teachers) {
-    display: none !important;
-}
