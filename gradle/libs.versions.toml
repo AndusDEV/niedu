@@ -1,5 +1,5 @@
 [versions]
-agp = "8.7.0"
+agp = "8.7.3"
 geckoview = "133.0.20241209150345"
 andXbrowser = "1.8.0"
 kotlin = "2.0.0"
