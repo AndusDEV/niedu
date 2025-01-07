@@ -61,6 +61,8 @@ class MainActivity : AppCompatActivity() {
 
         geckoSession = GeckoSession(settings)
 
+        geckoSession.navigationDelegate = navigationDelegate
+
         geckoSession.open(runtime)
         geckoView.setSession(geckoSession)
     }
