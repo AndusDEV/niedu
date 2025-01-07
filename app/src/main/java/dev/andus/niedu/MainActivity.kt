@@ -52,17 +52,36 @@ class MainActivity : AppCompatActivity() {
     private fun setupGeckoView() {
         runtime = GeckoRuntime.create(this)
         extensionController = runtime.webExtensionController
-
+    
         val settings = GeckoSessionSettings.Builder()
             .allowJavascript(true)
             .userAgentMode(GeckoSessionSettings.USER_AGENT_MODE_MOBILE)
             .build()
-
+    
         geckoSession = GeckoSession(settings)
         geckoSession.navigationDelegate = navigationDelegate
-
+    
+        // Linki target="_blank"
+        geckoSession.contentDelegate = object : GeckoSession.ContentDelegate {
+            override fun onLoadRequest(
+                session: GeckoSession,
+                request: GeckoSession.LoadRequest
+            ): GeckoSession.LoadResponse? {
+                if (request.flags and GeckoSession.LoadRequest.FLAG_IS_REDIRECT == 0) {
+                    openInExternalBrowser(request.uri)
+                    return GeckoSession.LoadResponse.CANCEL
+                }
+                return super.onLoadRequest(session, request)
+            }
+        }
+    
         geckoSession.open(runtime)
         geckoView.setSession(geckoSession)
+    }
+    
+    private fun openInExternalBrowser(url: String) {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        startActivity(intent)
     }
 
     private fun installIfv() {
