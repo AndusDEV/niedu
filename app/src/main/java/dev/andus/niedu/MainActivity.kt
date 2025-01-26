@@ -48,6 +48,8 @@ class MainActivity : AppCompatActivity() {
 
         installExtensions()
         loadLoginPage()
+
+        UpdateChecker(this).checkForUpdate()
     }
 
     private fun setupGeckoView() {
