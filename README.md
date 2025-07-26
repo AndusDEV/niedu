@@ -1,5 +1,9 @@
 # niedu
 [![Build](https://github.com/YOPER12/niedu/actions/workflows/android.yml/badge.svg)](https://github.com/YOPER12/niedu/actions/workflows/android.yml)
+
+> [!IMPORTANT]
+> Ponieważ osobiście używam już _innej_ aplikacji do dziennika, i aktualnie tworze inny projekt, przestałem wspierać niedu. Istnieje fork [yoper12/niedu](https://github.com/yoper12/niedu) który dodaje ciemny motyw i posiada nowszą IFV, nie obiecuje jednak że będzie wspierany od nowego roku szkolnego ponieważ ta decyzja zależy od autora forka.
+
 ## Czym jest niedu?
 Aplikacja **niedu** powstała jako odpowiedź na wprowadzenie płatnych funkcji w popularnym e-dzienniku. 
 Celem jej stworzenia jest umożliwienie użytkownikom dostępu do ważnych informacji bez konieczności opłacania dodatkowych subskrypcji.
